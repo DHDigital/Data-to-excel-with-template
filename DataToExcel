@@ -1,0 +1,60 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using DocumentFormat.OpenXml.Extensions;
+using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
+
+namespace DataToExcel
+{
+    class DataToExcel
+    {
+        public static bool AddDataToExcelXML(Dictionary<string, Dictionary<string, Dictionary<string, int>>> dataArray, string templatePath, string savePath, string sheetName)
+        {
+            try
+            {
+                byte[] byteArray = File.ReadAllBytes(templatePath);
+                using (MemoryStream stream = new MemoryStream())
+                {
+                    stream.Write(byteArray, 0, (int)byteArray.Length);
+                    using (SpreadsheetDocument spreadsheetDoc = SpreadsheetDocument.Open(stream, true))
+                    {
+                        // Change from template type to workbook type
+                        spreadsheetDoc.ChangeDocumentType(SpreadsheetDocumentType.Workbook);
+                        
+                        WorkbookPart myWorkbookPart = spreadsheetDoc.WorkbookPart;
+                        WorksheetPart worksheetPart = SpreadsheetReader.GetWorksheetPartByName(spreadsheetDoc, sheetName);
+                        WorksheetWriter writer = new WorksheetWriter(spreadsheetDoc, worksheetPart);
+                        
+                        foreach (KeyValuePair<string, Dictionary<string, Dictionary<string, int>>> kvp in dataArray)
+                        {
+                            string gridCoOrd1;
+                            int gridCoOrd2;
+
+                            foreach (KeyValuePair<string, Dictionary<string, int>> grid in kvp.Value)
+                            {
+                                foreach (KeyValuePair<string, int> grid2 in grid.Value)
+                                {
+                                    gridCoOrd1 = grid2.Key; //Value of Column
+                                    gridCoOrd2 = grid2.Value; //Value of Row
+                                    
+                                    string coordinates = gridCoOrd1 + gridCoOrd2.ToString();
+                                    
+                                    //grid.key value is the cell value to be added as string
+                                    writer.PasteText(coordinates, grid.Key);
+                                }
+                            }
+                        }
+                    }
+                    File.WriteAllBytes(savePath, stream.ToArray());
+                }
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return false;
+            }
+        }
+    }
+}
