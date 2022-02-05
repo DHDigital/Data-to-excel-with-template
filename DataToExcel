@@ -21,11 +21,11 @@ namespace DataToExcel
                     {
                         // Change from template type to workbook type
                         spreadsheetDoc.ChangeDocumentType(SpreadsheetDocumentType.Workbook);
-                        
+
                         WorkbookPart myWorkbookPart = spreadsheetDoc.WorkbookPart;
                         WorksheetPart worksheetPart = SpreadsheetReader.GetWorksheetPartByName(spreadsheetDoc, sheetName);
                         WorksheetWriter writer = new WorksheetWriter(spreadsheetDoc, worksheetPart);
-                        
+
                         foreach (KeyValuePair<string, Dictionary<string, Dictionary<string, int>>> kvp in dataArray)
                         {
                             string gridCoOrd1;
@@ -37,9 +37,9 @@ namespace DataToExcel
                                 {
                                     gridCoOrd1 = grid2.Key; //Value of Column
                                     gridCoOrd2 = grid2.Value; //Value of Row
-                                    
+
                                     string coordinates = gridCoOrd1 + gridCoOrd2.ToString();
-                                    
+
                                     //grid.key value is the cell value to be added as string
                                     writer.PasteText(coordinates, grid.Key);
                                 }
@@ -54,6 +54,23 @@ namespace DataToExcel
             {
                 Console.WriteLine(e.Message);
                 return false;
+            }
+        }
+
+        public static Dictionary<string, Dictionary<string, Dictionary<string, int>>> addToArray(Dictionary<string, Dictionary<string, Dictionary<string, int>>> data, string title, string content, string column, int row)
+        {
+            try
+            {
+                data.Add(content, new Dictionary<string, Dictionary<string, int>>());
+                data[title].Add(content, new Dictionary<string, int>());
+                data[title][content].Add(column, row);
+
+                return data;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return data;
             }
         }
     }
