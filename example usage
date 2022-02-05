@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 
-namespace Folder_Creation
+namespace CreateExcel
 {
-    class Class2
+    class CreateExcel
     {
         public void CreateExcel()
         {
