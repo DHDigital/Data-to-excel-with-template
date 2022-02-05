@@ -1,0 +1,28 @@
+using System.Collections.Generic;
+
+namespace Folder_Creation
+{
+    class Class2
+    {
+        public void CreateExcel()
+        {
+            var data = new Dictionary<string, Dictionary<string, Dictionary<string, int>>>();
+            
+            data = DataToExcel.DataToExcel.addToArray(
+                data, //include the current array
+                "title", //give the entry a title. Note this MUST be a unique title else it will through an exception
+                "value", //this is the intended value of the cell
+                "A", //this is the column to add the value to
+                1); //this is the row to add the value to
+
+            if (DataToExcel.DataToExcel.AddDataToExcelXML(
+                data,
+                "templatePath", //Path to your excel template
+                "savePath", //Where to save the new file
+                "Sheet Title")) // Title of the sheet in the workbook to write to
+            {
+                //File created successfully
+            }
+        }
+    }
+}
